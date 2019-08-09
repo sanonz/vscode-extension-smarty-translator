@@ -1,0 +1,91 @@
+{
+  "name": "smarty-translator",
+  "description": "Translate English to Chinese.",
+  "version": "1.0.0",
+  "publisher": "sanonz",
+  "repository": "https://github.com/sanonz/vscode-extension-smarty-translator",
+  "engines": {
+    "vscode": "^1.32.0"
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./extension.js",
+  "icon": "images/icon.png",
+  "keywords": [
+    "translate"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Smarty Translator",
+      "properties": {
+        "smartyTranslator.fromLanguage": {
+          "type": "string",
+          "default": "auto",
+          "description": "from language. default: auto"
+        },
+        "smartyTranslator.toLanguage": {
+          "type": "string",
+          "default": "zh",
+          "description": "target language. default: zh"
+        },
+        "smartyTranslator.displayMode": {
+          "type": "string",
+          "default": "bar",
+          "enum": [
+            "bar",
+            "popup"
+          ],
+          "enumDescriptions": [
+            "Display a message to the status bar.",
+            "Display a message to the pop-up."
+          ],
+          "description": "Result display mode. default: bar"
+        },
+        "smartyTranslator.duration": {
+          "type": "number",
+          "default": 30000,
+          "description": "Display duration, millisecond. If set to 0, it will not turn off automatically. default: 30000"
+        },
+        "smartyTranslator.useAutoMatch": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatic matching. default: true"
+        }
+      }
+    },
+    "keybindings": [
+      {
+        "command": "extension.smartyTranslate",
+        "key": "meta+t",
+        "mac": "cmd+shift+t",
+        "when": "editorTextFocus"
+      }
+    ],
+    "commands": [
+      {
+        "command": "extension.smartyTranslate",
+        "title": "Smarty Translate"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "extension.smartyTranslate",
+          "title": "Smarty Translate",
+          "when": "editorHasSelection",
+          "group": "9_cutcopypaste@4"
+        }
+      ]
+    }
+  },
+  "scripts": {},
+  "devDependencies": {},
+  "dependencies": {
+    "axios": "^0.19.0"
+  }
+}
