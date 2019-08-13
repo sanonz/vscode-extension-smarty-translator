@@ -63,7 +63,7 @@
         "command": "extension.smartyTranslate",
         "key": "meta+t",
         "mac": "cmd+shift+t",
-        "when": "editorTextFocus"
+        "when": "editorHasSelection"
       }
     ],
     "commands": [
