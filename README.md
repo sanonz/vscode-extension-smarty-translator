@@ -10,7 +10,7 @@
 
 ![Preview](images/preview/bar.png)
 
-3. 弹出框实现 `(Display Mode: popup)`
+3. 弹出框显示 `(Display Mode: popup)`
 
 ![Preview](images/preview/popup.png)
 
@@ -29,13 +29,13 @@
 | From Language | `string` | `auto` | `true` | 要翻译的语言为什么语言，`auto` 为自动检测语言推荐使用 |
 | To Language | `string` | `zh` | `true` | 要翻译为什么语言 |
 | duration | `number` | `30000` | `true` | 弹窗显示时间，为 0 则不会自动关闭，只对 `Display Mode = bar` 时生效 |
-| Use Auto Match | `boolean` | `true` | `true` | 鼠标悬停时未选择单词是否触发翻译，此选项可减少翻译结果弹出过于频繁，影响阅读弹窗其它内容的问题 |
+| Use hover | `boolean` | `true` | `true` | 是否开启鼠标悬停触发翻译 |
 
 命令
 
 | Name | Description | Keyboard Shortcuts |
 | --- | --- | --- |
-| extension.smartyTranslate | 触发翻译，需要先使用光标选择一个单词 | window(cmd+shift) + T |
+| extension.smartyTranslate | 触发翻译，需要先使用光标选择一个单词 | ctrl(cmd) + T |
 
 
 ## 开发
