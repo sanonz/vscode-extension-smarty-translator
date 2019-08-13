@@ -61,8 +61,8 @@
     "keybindings": [
       {
         "command": "extension.smartyTranslate",
-        "key": "meta+t",
-        "mac": "cmd+shift+t",
+        "key": "ctrl+t",
+        "mac": "cmd+t",
         "when": "editorHasSelection"
       }
     ],
