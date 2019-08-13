@@ -51,10 +51,10 @@
           "default": 30000,
           "description": "Display duration, millisecond. If set to 0, it will not turn off automatically. default: 30000"
         },
-        "smartyTranslator.useAutoMatch": {
+        "smartyTranslator.useHover": {
           "type": "boolean",
           "default": true,
-          "description": "Automatic matching. default: true"
+          "description": "Use hover to trigger, Need to restart. default: true"
         }
       }
     },

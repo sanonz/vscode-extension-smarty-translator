@@ -10,7 +10,7 @@ let translator = null;
 function activate(context) {
   translator = new Translator();
 
-  let disposable = vscode.commands.registerCommand('extension.smartyTranslate', () => {
+  const disposable = vscode.commands.registerCommand('extension.smartyTranslate', () => {
     const editor = vscode.window.activeTextEditor;
     if(!editor) {
       return;
@@ -18,18 +18,18 @@ function activate(context) {
 
     const selection = editor.selection;
     let text = editor.document.getText(selection);
-    if(!text) {
-      return;
-    }
 
+    const icon = '$(book)';
+    const config = getConfig();
+    const errorMsg = icon + ' ' + text + ' 翻译失败';
+    let bar = vscode.window.setStatusBarMessage(icon + ' 正在翻译 ' + text + ' 中...');
     translator.parse(text.toLocaleLowerCase())
       .then(data => {
         if(data) {
           const msg = formator(data).join('\u00a0\u00a0\u00a0\u00a0');
-          const config = vscode.workspace.getConfiguration().smartyTranslator;
 
           if(config.displayMode === 'bar') {
-            const args = ['$(book) ' + msg];
+            const args = [icon + ' ' + msg];
             if(config.duration !== 0) {
               args.push(new Promise(resolve => setTimeout(resolve, config.duration)));
             }
@@ -37,33 +37,60 @@ function activate(context) {
           } else {
             vscode.window.showInformationMessage(msg);
           }
+        } else {
+          if(config.displayMode === 'bar') {
+            vscode.window.setStatusBarMessage(errorMsg);
+          } else {
+            vscode.window.showInformationMessage(errorMsg);
+          }
+        }
+      })
+      .catch(error => {
+        if(config.displayMode === 'bar') {
+          vscode.window.setStatusBarMessage(errorMsg);
+        } else {
+          vscode.window.showInformationMessage(errorMsg);
+        }
+      })
+      .finally(() => {
+        if(bar) {
+          bar.dispose();
+          bar = null;
         }
       });
   });
 
   context.subscriptions.push(disposable);
 
-  vscode.languages.registerHoverProvider('*', {
-    provideHover(document, position) {
-      const config = vscode.workspace.getConfiguration().smartyTranslator;
-      let text = document.getText(vscode.window.activeTextEditor.selection);
-      if(!text && config.useAutoMatch) {
-        text = document.getText(document.getWordRangeAtPosition(position));
+  if(getConfig('useHover')) {
+    vscode.languages.registerHoverProvider('*', {
+      provideHover(document, position) {
+        let text = document.getText(vscode.window.activeTextEditor.selection);
+        const readText = document.getText(document.getWordRangeAtPosition(position));
+        if(!text || text !== readText) {
+          text = readText;
+        }
+        if(text) {
+          return new Promise((resolve, reject) => {
+            translator.parse(text.toLocaleLowerCase())
+              .then(data => {
+                if(data) {
+                  const msg = formator(data);
+                  resolve(new vscode.Hover(msg.join('\n\n')));
+                }
+              })
+              .catch(reject);
+          });
+        }
       }
-      if(text) {
-        return new Promise((resolve, reject) => {
-          translator.parse(text.toLocaleLowerCase())
-            .then(data => {
-              if(data) {
-                const msg = formator(data);
-                resolve(new vscode.Hover(msg.join('\n\n')));
-              }
-            })
-            .catch(reject);
-        });
-      }
-    }
-  });
+    });
+  }
+}
+
+function getConfig(key) {
+  const config = vscode.workspace.getConfiguration().smartyTranslator;
+  
+  return key === undefined ? config : config[key];
 }
 
 function formator(data) {
