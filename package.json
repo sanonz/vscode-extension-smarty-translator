@@ -23,15 +23,22 @@
       "type": "object",
       "title": "Smarty Translator",
       "properties": {
-        "smartyTranslator.fromLanguage": {
+        "smartyTranslator.language": {
           "type": "string",
-          "default": "auto",
-          "description": "from language. default: auto"
-        },
-        "smartyTranslator.toLanguage": {
-          "type": "string",
-          "default": "zh",
-          "description": "target language. default: zh"
+          "default": "en",
+          "enum": [
+            "en",
+            "fr",
+            "ko",
+            "ja"
+          ],
+          "enumDescriptions": [
+            "English",
+            "French",
+            "Korean",
+            "Japanese"
+          ],
+          "description": "Translate into language. default: en"
         },
         "smartyTranslator.displayMode": {
           "type": "string",

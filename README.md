@@ -1,6 +1,6 @@
 # 介绍
 
-目前 vscode 插件市场的翻译插件多不胜数，大多也都是国人开发的，使用挺方便，但奈何自己的英语是散装版的，没有音标总感觉忐忑不安，众多插件中没有找到支持带音标的翻译插件，于是自己就做了一款。这款插件主要用来翻译单词，展示音标及详细的意思，对于长句也能翻译，但支持不太好。
+目前 vscode 插件市场的翻译插件多不胜数，大多也都是国人开发的，使用挺方便，但奈何自己的英语是散装版的，没有音标总感觉忐忑不安，众多插件中没有找到支持带音标的翻译插件，于是自己就做了一款。这款插件主要用来翻译单词，展示音标及详细的意思。
 
 1. 鼠标悬停
 
@@ -26,8 +26,7 @@
 | Name | Type | Default | Required | Description |
 | --- | --- | --- | --- | --- |
 | Display Mode | `enum` | `bar` | `true` | 翻译显示方式：`bar` 为显示到底部的状态栏，popup 为弹窗显示，具体请看上方的截图 |
-| From Language | `string` | `auto` | `true` | 要翻译的语言为什么语言，`auto` 为自动检测语言推荐使用 |
-| To Language | `string` | `zh` | `true` | 要翻译为什么语言 |
+| language | `string` | `en` | `true` | 要翻译的语言为什么语言，目前只支持中英翻译 |
 | duration | `number` | `30000` | `true` | 弹窗显示时间，为 0 则不会自动关闭，只对 `Display Mode = bar` 时生效 |
 | Use hover | `boolean` | `true` | `true` | 是否开启鼠标悬停触发翻译 |
 
@@ -53,4 +52,4 @@ $ cd vscode-extension-smarty-translator
 $ npm install
 ```
 
-选择：`Debug -> Run Extension`，会弹出一个新的 vscode 窗口，这个窗口已经内置了这款插件，打开一个项目 pick 一个单词，不出意外会有翻译结果出来。
+选择：`Run -> Start Debugging`，会弹出一个新的 vscode 窗口，这个窗口已经内置了这款插件，打开一个项目 pick 一个单词，不出意外会有翻译结果出来。

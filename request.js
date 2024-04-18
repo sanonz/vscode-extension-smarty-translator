@@ -5,7 +5,7 @@ const cache = {
   Cookie: {},
 };
 
-const host = 'fanyi.baidu.com';
+const host = 'dict.youdao.com';
 const protocol = 'https:'
 const origin = protocol + '//' + host;
 
@@ -16,7 +16,6 @@ const request = axios.create({
     'Host': host,
     'Origin': origin,
     'Referer': origin + '/',
-    'X-Requested-With': 'XMLHttpRequest',
   },
 });
 

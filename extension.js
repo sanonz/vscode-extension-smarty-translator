@@ -23,7 +23,7 @@ function activate(context) {
     const config = getConfig();
     const errorMsg = icon + ' ' + text + ' 翻译失败';
     let bar = vscode.window.setStatusBarMessage(icon + ' 正在翻译 ' + text + ' 中...');
-    translator.parse(text.toLocaleLowerCase())
+    translator.query(text.toLocaleLowerCase())
       .then(data => {
         if(data) {
           const msg = formator(data).join('\u00a0\u00a0\u00a0\u00a0');
@@ -66,13 +66,13 @@ function activate(context) {
     vscode.languages.registerHoverProvider('*', {
       provideHover(document, position) {
         let text = document.getText(vscode.window.activeTextEditor.selection);
-        const readText = document.getText(document.getWordRangeAtPosition(position));
+        const readText = document.getText(document.getWordRangeAtPosition(position, /[a-zA-Z]+/));
         if(!text || text !== readText) {
           text = readText;
         }
         if(text) {
           return new Promise((resolve, reject) => {
-            translator.parse(text.toLocaleLowerCase())
+            translator.query(text.toLocaleLowerCase())
               .then(data => {
                 if(data) {
                   const msg = formator(data);
@@ -95,36 +95,29 @@ function getConfig(key) {
 
 function formator(data) {
   const msg = [];
-  if(data.dict_result.simple_means) {
-    const symbols = data.dict_result.simple_means.symbols;
+  const result = data.ec;
 
-    symbols.forEach(symbol => {
-      let arr = [];
-      if(!!symbol.ph_am) {
-        arr.push('英/' + symbol.ph_am + '/');
+  if (result) {
+    if (result.word) {
+      if (result.word.usphone && result.word.ukphone) {
+        msg.push(`美/${result.word.usphone}/ 英/${result.word.ukphone}/`);
       }
-      if(!!symbol.ph_en) {
-        arr.push('美/' + symbol.ph_en + '/');
+
+      for (item of result.word.trs) {
+        msg.push(`${item.pos || ''} ${item.tran}`);
       }
-      msg.push(arr.join(' '));
+    } else if (result.web_trans) {
+      for (item of result.web_trans) {
+        msg.push(item);
+      }
+    }
 
-      symbol.parts.forEach(part => {
-        arr.length = 0;
-        if(!!part.part) {
-          arr.push(part.part);
-        }
-        if(!!part.part_name) {
-          arr.push('[' + part.part_name + ']');
-        }
-
-        arr.push(part.means.join('; '));
-        msg.push(arr.join(' '));
-      });
-    });
-  } else if(data.trans_result) {
-    const rs = data.trans_result.data;
-    if(rs && rs[0]) {
-      msg.push(data.trans_result.data[0].dst);
+    if (result.exam_type) {
+      msg.push(result.exam_type.join(' / '));
+    }
+  } else if (data.typos?.typo) {
+    for (item of data.typos.typo) {
+      msg.push(`[${item.word || ''}] ${item.trans}`);
     }
   }
 
