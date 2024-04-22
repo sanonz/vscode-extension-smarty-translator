@@ -63,7 +63,7 @@ function activate(context) {
   context.subscriptions.push(disposable);
 
   if(getConfig('useHover')) {
-    vscode.languages.registerHoverProvider('*', {
+    const disposable2 = vscode.languages.registerHoverProvider('*', {
       provideHover(document, position) {
         let text = document.getText(vscode.window.activeTextEditor.selection);
         const readText = document.getText(document.getWordRangeAtPosition(position, /[a-zA-Z]+/));
@@ -75,8 +75,11 @@ function activate(context) {
             translator.query(text.toLocaleLowerCase())
               .then(data => {
                 if(data) {
-                  const msg = formator(data);
-                  resolve(new vscode.Hover(msg.join('\n\n')));
+                  const msg = formator(data, true);
+                  console.log('msg', msg.join('\n\n'));
+                  const markdown = new vscode.MarkdownString(msg.join('\n\n'));
+                  markdown.isTrusted = true;
+                  resolve(new vscode.Hover(markdown));
                 }
               })
               .catch(reject);
@@ -84,6 +87,8 @@ function activate(context) {
         }
       }
     });
+
+    context.subscriptions.push(disposable2);
   }
 }
 
@@ -93,14 +98,18 @@ function getConfig(key) {
   return key === undefined ? config : config[key];
 }
 
-function formator(data) {
+function formator(data, colorful) {
   const msg = [];
   const result = data.ec;
+
+  const c = (tag) => (colorful ? tag : '');
 
   if (result) {
     if (result.word) {
       if (result.word.usphone && result.word.ukphone) {
-        msg.push(`美/${result.word.usphone}/ 英/${result.word.ukphone}/`);
+        msg.push(`${c('**')}${data.input}${c('**')} 美 /${result.word.usphone}/  英 /${result.word.ukphone}/`);
+      } else {
+        msg.push(`${c('**')}${data.input}${c('**')}`);
       }
 
       for (item of result.word.trs) {
@@ -113,11 +122,11 @@ function formator(data) {
     }
 
     if (result.exam_type) {
-      msg.push(result.exam_type.join(' / '));
+      msg.push(c('*') + result.exam_type.join(' / ') + c('*'));
     }
   } else if (data.typos?.typo) {
     for (item of data.typos.typo) {
-      msg.push(`[${item.word || ''}] ${item.trans}`);
+      msg.push(`[${item.word || ''}] ${item.trans || ''}`);
     }
   }
 
