@@ -10,7 +10,7 @@ let translator = null;
 function activate(context) {
   translator = new Translator();
 
-  const disposable = vscode.commands.registerCommand('extension.smartyTranslate', () => {
+  const disposableTranslate = vscode.commands.registerCommand('extension.smartyTranslate', () => {
     const editor = vscode.window.activeTextEditor;
     if(!editor) {
       return;
@@ -60,14 +60,14 @@ function activate(context) {
       });
   });
 
-  context.subscriptions.push(disposable);
+  context.subscriptions.push(disposableTranslate);
 
   if(getConfig('useHover')) {
-    const disposable2 = vscode.languages.registerHoverProvider('*', {
+    const disposableHover = vscode.languages.registerHoverProvider('*', {
       provideHover(document, position) {
         let text = document.getText(vscode.window.activeTextEditor.selection);
-        const readText = document.getText(document.getWordRangeAtPosition(position, /[a-zA-Z]+/));
-        if(!text || text !== readText) {
+        if(!text) {
+          const readText = document.getText(document.getWordRangeAtPosition(position, /[a-zA-Z]+/));
           text = readText;
         }
         if(text) {
@@ -88,7 +88,7 @@ function activate(context) {
       }
     });
 
-    context.subscriptions.push(disposable2);
+    context.subscriptions.push(disposableHover);
   }
 }
 
