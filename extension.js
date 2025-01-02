@@ -1,15 +1,18 @@
 const vscode = require('vscode');
-const Translator = require('./Translator');
+
+const { translate, formator } = require('./translator');
 
 
-let translator = null;
+function getConfig(key) {
+  const config = vscode.workspace.getConfiguration().smartyTranslator;
+
+  return key === undefined ? config : config[key];
+}
 
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-  translator = new Translator();
-
   const disposableTranslate = vscode.commands.registerCommand('extension.smartyTranslate', () => {
     const editor = vscode.window.activeTextEditor;
     if(!editor) {
@@ -23,7 +26,7 @@ function activate(context) {
     const config = getConfig();
     const errorMsg = icon + ' ' + text + ' 翻译失败';
     let bar = vscode.window.setStatusBarMessage(icon + ' 正在翻译 ' + text + ' 中...');
-    translator.query(text.toLocaleLowerCase())
+    translate(text.toLocaleLowerCase())
       .then(data => {
         if(data) {
           const msg = formator(data).join('\u00a0\u00a0\u00a0\u00a0');
@@ -72,7 +75,7 @@ function activate(context) {
         }
         if(text) {
           return new Promise((resolve, reject) => {
-            translator.query(text.toLocaleLowerCase())
+            translate(text.toLocaleLowerCase())
               .then(data => {
                 if(data) {
                   const msg = formator(data, true);
@@ -91,47 +94,6 @@ function activate(context) {
 
     context.subscriptions.push(disposableHover);
   }
-}
-
-function getConfig(key) {
-  const config = vscode.workspace.getConfiguration().smartyTranslator;
-  
-  return key === undefined ? config : config[key];
-}
-
-function formator(data, colorful) {
-  const msg = [];
-  const result = data.ec;
-
-  const c = (tag) => (colorful ? tag : '');
-
-  if (result) {
-    if (result.word) {
-      if (result.word.usphone && result.word.ukphone) {
-        msg.push(`${c('**<span style="color:#fd9720;">')}${data.input}${c('</span>**')} 美 /${c('<span style="color:#8abc25;">')}${result.word.usphone}${c('</span>')}/  英 /${c('<span style="color:#8abc25;">')}${result.word.ukphone}${c('</span>')}/`);
-      } else {
-        msg.push(`${c('**<span style="color:#fd9720;">')}${data.input}${c('</span>**')}`);
-      }
-
-      for (item of result.word.trs) {
-        msg.push(`${item.pos || ''} ${item.tran}`);
-      }
-    } else if (result.web_trans) {
-      for (item of result.web_trans) {
-        msg.push(item);
-      }
-    }
-
-    if (result.exam_type) {
-      msg.push(c('*<span style="color:#888888;">') + result.exam_type.join(' / ') + c('</span>*'));
-    }
-  } else if (data.typos?.typo) {
-    for (item of data.typos.typo) {
-      msg.push(`[${item.word || ''}] ${item.trans || ''}`);
-    }
-  }
-
-  return msg;
 }
 
 function deactivate() {}
