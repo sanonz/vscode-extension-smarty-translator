@@ -79,6 +79,7 @@ function activate(context) {
                   console.log('msg', msg.join('\n\n'));
                   const markdown = new vscode.MarkdownString(msg.join('\n\n'));
                   markdown.isTrusted = true;
+                  markdown.supportHtml = true;
                   resolve(new vscode.Hover(markdown));
                 }
               })
@@ -107,9 +108,9 @@ function formator(data, colorful) {
   if (result) {
     if (result.word) {
       if (result.word.usphone && result.word.ukphone) {
-        msg.push(`${c('**')}${data.input}${c('**')} 美 /${result.word.usphone}/  英 /${result.word.ukphone}/`);
+        msg.push(`${c('**<span style="color:#fd9720;">')}${data.input}${c('</span>**')} 美 /${c('<span style="color:#8abc25;">')}${result.word.usphone}${c('</span>')}/  英 /${c('<span style="color:#8abc25;">')}${result.word.ukphone}${c('</span>')}/`);
       } else {
-        msg.push(`${c('**')}${data.input}${c('**')}`);
+        msg.push(`${c('**<span style="color:#fd9720;">')}${data.input}${c('</span>**')}`);
       }
 
       for (item of result.word.trs) {
@@ -122,7 +123,7 @@ function formator(data, colorful) {
     }
 
     if (result.exam_type) {
-      msg.push(c('*') + result.exam_type.join(' / ') + c('*'));
+      msg.push(c('*<span style="color:#888888;">') + result.exam_type.join(' / ') + c('</span>*'));
     }
   } else if (data.typos?.typo) {
     for (item of data.typos.typo) {
