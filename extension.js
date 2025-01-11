@@ -69,9 +69,8 @@ function activate(context) {
     const disposableHover = vscode.languages.registerHoverProvider('*', {
       provideHover(document, position) {
         let text = document.getText(vscode.window.activeTextEditor.selection);
-        const readText = document.getText(document.getWordRangeAtPosition(position, /[a-zA-Z]+/));
-        if(!text || text !== readText) {
-          text = readText;
+        if(!text) {
+          text = document.getText(document.getWordRangeAtPosition(position, /[a-zA-Z]+/));
         }
         if(text) {
           return new Promise((resolve, reject) => {
