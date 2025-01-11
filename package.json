@@ -1,7 +1,7 @@
 {
   "name": "smarty-translator",
   "description": "Translate English to Chinese.",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "publisher": "sanonz",
   "repository": "https://github.com/sanonz/vscode-extension-smarty-translator",
   "engines": {
